@@ -39,8 +39,8 @@ app.get('/buscar', async (req, res) => {
             // 2. Montagem da query com o "between" nas datas
             const query = {
               $or: cnpjFields,
-              "filtroPesquisado.dataInicio": { $gte: datainicio },
-              "filtroPesquisado.dataFim": { $lte: datafim }
+              "filtroPesquisado.dataInicio": { $gte: formatarData(strInicio) },
+              "filtroPesquisado.dataFim": { $lte: formatarData(strFim) }
             };
         };
 
@@ -66,3 +66,8 @@ app.get('/buscar', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor Express rodando com sucesso na porta ${PORT}`);
 });
+
+function formatarData(dataString) {
+  const [dia, mes, ano] = dataString.split('/');
+  return new Date(`${ano}-${mes}-${dia}T00:00:00.000Z`);
+}
