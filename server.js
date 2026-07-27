@@ -31,8 +31,8 @@ app.get('/buscar', async (req, res) => {
 
         // Montagem da query de busca no MongoDB
         const query = {
-            // 1. Cria dinamicamente o array de $or para até 15 CNPJs
-            const cnpjFields = Array.from({ length: 15 }, (_, i) => ({
+            // 1. Cria dinamicamente o array de $or para até 10 CNPJs
+            const cnpjFields = Array.from({ length: 10 }, (_, i) => ({
               [`cnpj_${i + 1}`]: cnpj
             }));
             
