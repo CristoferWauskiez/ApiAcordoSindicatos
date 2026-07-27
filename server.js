@@ -31,15 +31,17 @@ app.get('/buscar', async (req, res) => {
 
         // Montagem da query de busca no MongoDB
         const query = {
-            // Busca dinâmica: varre o banco procurando o CNPJ em qualquer um dos campos dinâmicos (cnpj_1, cnpj_2, etc.)
-            $or: [
-                { cnpj_1: cnpj },
-                { cnpj_2: cnpj },
-                { cnpj_3: cnpj }
-            ],
-            // Filtra pelas datas salvas no objeto filtroPesquisado
-            "filtroPesquisado.dataInicio": datainicio,
-            "filtroPesquisado.dataFim": datafim
+            // 1. Cria dinamicamente o array de $or para até 15 CNPJs
+            const cnpjFields = Array.from({ length: 15 }, (_, i) => ({
+              [`cnpj_${i + 1}`]: cnpj
+            }));
+            
+            // 2. Montagem da query com o "between" nas datas
+            const query = {
+              $or: cnpjFields,
+              "filtroPesquisado.dataInicio": { $gte: datainicio },
+              "filtroPesquisado.dataFim": { $lte: datafim }
+            };
         };
 
         console.log(`[Express] Buscando registros para o CNPJ ${cnpj} no período ${datainicio} - ${datafim}`);
