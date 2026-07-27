@@ -45,15 +45,9 @@ app.get('/buscar', verificarAutenticacao, async (req, res) => {
         const db = client.db(nomeBanco);
         const colecao = db.collection(nomeColecao);
 
-        // Cria dinamicamente o array de $or para até 10 CNPJs
-        const cnpjFields = Array.from({ length: 10 }, (_, i) => ({
-        [`cnpj_${i + 1}`]: cnpj
-        }));
-
-        // Montagem da query com as datas convertidas
         const query = {
-        $or: cnpjFields,
-        "filtroPesquisado.dataInicio": { $gte: datainicio, $lte: datafim },
+           "sindicatos.cnpj": cnpj,
+           "filtroPesquisado.dataInicio": { $gte: datainicio, $lte: datafim },
         };
 
         console.log(`[Express] Buscando registros para o CNPJ ${cnpj}`);
