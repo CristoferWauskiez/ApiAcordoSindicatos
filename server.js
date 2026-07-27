@@ -39,8 +39,8 @@ app.get('/buscar', async (req, res) => {
             // 2. Montagem da query com o "between" nas datas
             const query = {
               $or: cnpjFields,
-              "filtroPesquisado.dataInicio": { $gte: formatarData(strInicio) },
-              "filtroPesquisado.dataFim": { $lte: formatarData(strFim) }
+              "filtroPesquisado.dataInicio": { $gte: formatarData(datainicio) },
+              "filtroPesquisado.dataFim": { $lte: formatarData(datafim) }
             };
         };
 
