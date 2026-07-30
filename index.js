@@ -34,9 +34,9 @@ const verificarAutenticacao = (req, res, next) => {
 app.get('/buscar', verificarAutenticacao, async (req, res) => {
     const { cnpj, datainicio, datafim } = req.query;
 
-    if (!cnpj || !datainicio || !datafim) {
+    if (!datainicio || !datafim) {
         return res.status(400).json({ 
-            erro: "Parâmetros 'cnpj', 'datainicio' e 'datafim' são obrigatórios na URL." 
+            erro: "Parâmetros 'datainicio' e 'datafim' são obrigatórios na URL."
         });
     }
 
@@ -46,13 +46,17 @@ app.get('/buscar', verificarAutenticacao, async (req, res) => {
         const colecao = db.collection(nomeColecao);
 
         const query = {
-           "sindicatos.cnpj": cnpj,
-           "filtroPesquisado.dataInicio": { $gte: datainicio, $lte: datafim },
+        "filtroPesquisado.dataInicio": { $gte: datainicio, $lte: datafim }
         };
 
-        console.log(`[Express] Buscando registros para o CNPJ ${cnpj}`);
+        // 2. Adiciona o CNPJ dinamicamente apenas se ele não estiver vazio
+        if (cnpj && cnpj.trim() !== "") {
+        query["sindicatos.cnpj"] = cnpj;
+        }
         
         const resultados = await colecao.find(query).toArray();
+
+        console.log(`[Express] Consulta realizada com sucesso. Total de resultados: ${resultados.length}`);
 
         return res.status(200).json({
             total: resultados.length,
